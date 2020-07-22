@@ -215,8 +215,10 @@ class VideoConfig:
         self.video_src = args.video_src
         self.devices = Devices()
         self.devices.get_video_devices()
-        self.dev = self.devices.search_device(self.video_src)
-        self.dev_caps = self.get_caps()
+
+        if not os.path.isfile(self.video_src):
+            self.dev = self.devices.search_device(self.video_src)
+            self.dev_caps = self.get_caps()
 
     def get_caps(self):
         if self.res == "full_hd":
