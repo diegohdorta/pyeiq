@@ -26,7 +26,7 @@ class aNNInterpreter:
             options = ann.CreationOptions()
             self.runtime = ann.IRuntime(options)
 
-            preferredBackends = [ann.BackendId('CpuAcc'), ann.BackendId('CpuRef')]
+            preferredBackends = [ann.BackendId('VsiNpu'), ann.BackendId('CpuAcc'), ann.BackendId('CpuRef')]
             opt_network, messages = ann.Optimize(
                 network, preferredBackends, self.runtime.GetDeviceSpec(), ann.OptimizerOptions())
 
