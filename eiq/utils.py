@@ -54,13 +54,6 @@ class Downloader:
         return elapsed[min_time]
 
     @staticmethod
-    def check_sha1(file_path, sha1_hash):
-        with open(file_path, 'rb') as f:
-            file = f.read()
-
-        return sha1(file).hexdigest() == sha1_hash
-
-    @staticmethod
     def download_from_url(url, filename=None, download_path=None):
         timer = Timer()
 
@@ -135,7 +128,7 @@ class Downloader:
 
         self.download_from_web(url, filename, download_path, drive=drive_flag)
         if unzip and self.downloaded_file is not None:
-            if sha1_hash and self.check_sha1(self.downloaded_file, sha1_hash):
+            if sha1_hash and check_sha1(self.downloaded_file, sha1_hash):
                 shutil.unpack_archive(self.downloaded_file, download_path)
             else:
                 os.remove(self.downloaded_file)
@@ -209,6 +202,24 @@ def colored(msg, color):
         color_id = 33
 
     return "\033[{}m".format(color_id) + msg + "\033[0m"
+
+
+def check_sha1(file_path, sha1_hash):
+    with open(file_path, 'rb') as f:
+        file = f.read()
+
+    return sha1(file).hexdigest() == sha1_hash
+
+
+def check_data(zipped_file, sha1sum, *data):
+    for file in data:
+        if file and not os.path.isfile(file):
+            if os.path.isfile(zipped_file) and check_sha1(zipped_file, sha1sum):
+                path = os.path.dirname(zipped_file)
+                shutil.unpack_archive(zipped_file, path)
+            else:
+                return False
+    return True
 
 
 def file_type(file_path):
