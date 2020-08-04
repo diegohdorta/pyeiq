@@ -57,6 +57,7 @@ class eIQFireClassificationArmNN(DemoBase):
 
     def start(self):
         self.gather_data()
+        self.validate_data(self.image, self.model)
         self.interpreter = aNNInterpreter(self.model)
 
     def run(self):

@@ -14,7 +14,7 @@ from PIL import Image
 
 from eiq.apps.switch_video.config import *
 from eiq.config import BASE_DIR, ZIP
-from eiq.utils import args_parser, Downloader
+from eiq.utils import args_parser, check_data, Downloader
 
 
 class eIQVideoSwitchCore:
@@ -27,6 +27,9 @@ class eIQVideoSwitchCore:
 
         self.base_dir = os.path.join(BASE_DIR, self.class_name)
         self.binary = os.path.join(self.base_dir, "bin", "video_switch_core")
+        self.labels = os.path.join(self.base_dir, "model", "labelmap.txt")
+        self.media = os.path.join(self.base_dir, "media", "video_device.mp4")
+        self.model = os.path.join(self.base_dir, "model", "detect.tflite")
         self.tmp_img = NPU_IMG
 
     @staticmethod
@@ -40,7 +43,7 @@ class eIQVideoSwitchCore:
         downloader = Downloader(self.args)
         downloader.retrieve_data(self.data['src'], self.class_name + ZIP,
                                  self.base_dir, self.data['sha1'], True)
-        os.chmod(self.binary, S_IEXEC)
+
 
     def run_inference(self, device):
         self.pid[device] = subprocess.Popen(RUN.format(self.binary, device), shell=True).pid
@@ -109,7 +112,11 @@ class eIQVideoSwitchCore:
 
     def start(self):
         os.environ['VSI_NN_LOG_LEVEL'] = "0"
-        self.gather_data()
+        if not check_data(os.path.join(self.base_dir, self.class_name + ZIP),
+                          self.data['sha1'], self.binary, self.labels,
+                          self.media, self.model):
+            self.gather_data()
+        os.chmod(self.binary, S_IEXEC)
         self.start_threads()
 
     def run(self):

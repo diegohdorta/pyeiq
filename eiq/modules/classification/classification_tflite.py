@@ -59,6 +59,7 @@ class eIQFireClassificationTFLite(DemoBase):
 
     def start(self):
         self.gather_data()
+        self.validate_data(self.image, self.model)
         self.interpreter = TFLiteInterpreter(self.model)
 
     def run(self):
@@ -121,6 +122,7 @@ class eIQObjectClassificationTFLite(DemoBase):
 
     def start(self):
         self.gather_data()
+        self.validate_data(self.image, self.labels, self.model)
         self.interpreter = TFLiteInterpreter(self.model)
         self.labels = self.load_labels(self.labels)
 

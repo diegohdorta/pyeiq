@@ -5,6 +5,7 @@ import os
 from random import randint
 from socket import gethostname
 from stat import S_IEXEC
+import sys
 import threading
 
 import gi
@@ -18,7 +19,7 @@ import numpy as np
 from eiq.apps.config import SWITCH_IMAGE
 from eiq.apps.utils import run_label_image
 from eiq.config import BASE_DIR, ZIP
-from eiq.utils import args_parser, Downloader
+from eiq.utils import args_parser, check_data, Downloader
 
 
 class eIQSwitchLabelImage(Gtk.Window):
@@ -49,9 +50,13 @@ class eIQSwitchLabelImage(Gtk.Window):
         self.image_map = Gtk.ListStore(str)
 
         download = Downloader(self.args)
-        download.retrieve_data(self.data['src'],
-                               self.__class__.__name__ + ZIP,
-                               self.base_dir, self.data['sha1'], True)
+        if not check_data(os.path.join(self.base_dir,
+                                       self.__class__.__name__ + ZIP),
+                          self.data['sha1'], self.binary, self.model,
+                          self.labels):
+            download.retrieve_data(self.data['src'],
+                                   self.__class__.__name__ + ZIP,
+                                   self.base_dir, self.data['sha1'], True)
         os.chmod(self.binary, S_IEXEC)
 
         self.get_bmp_images()
@@ -156,6 +161,10 @@ class eIQSwitchLabelImage(Gtk.Window):
             self.set_displayed_image(self.image)
 
     def get_bmp_images(self):
+        if not os.path.exists(self.media_dir) or not os.listdir(self.media_dir):
+            sys.exit(f"{self.media_dir} does not exists, try to run"
+                     " 'pyeiq --clear-cache' and run this application again.")
+
         for file in os.listdir(self.media_dir):
             self.image_map.append([file])
 
@@ -166,7 +175,7 @@ class eIQSwitchLabelImage(Gtk.Window):
             file = os.path.join(self.media_dir, file)
             images.append(file)
 
-        index = randint(0, len(images))
+        index = randint(0, (len(images) - 1))
         return images[index]
 
     @staticmethod

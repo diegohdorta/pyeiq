@@ -184,6 +184,7 @@ class eIQPoseDetection(DemoBase):
 
     def start(self):
         self.gather_data()
+        self.validate_data(self.image, self.model)
         self.interpreter = TFLiteInterpreter(self.model)
 
     def run(self):

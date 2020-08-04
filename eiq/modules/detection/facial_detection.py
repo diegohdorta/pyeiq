@@ -81,6 +81,7 @@ class eIQFacialExpressionDetection(DemoBase):
 
     def start(self):
         self.gather_data()
+        self.validate_data(self.image, self.model, self.face_cascade)
         self.face_cascade = cv2.CascadeClassifier(self.face_cascade)
         self.interpreter = TFLiteInterpreter(self.model)
 
@@ -136,6 +137,8 @@ class eIQFaceAndEyesDetection(DemoBase):
 
     def start(self):
         self.gather_data()
+        self.validate_data(self.image, self.model,
+                           self.eye_cascade, self.face_cascade)
         self.eye_cascade = cv2.CascadeClassifier(self.eye_cascade)
         self.face_cascade = cv2.CascadeClassifier(self.face_cascade)
 

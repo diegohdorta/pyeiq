@@ -197,6 +197,7 @@ class eIQObjectDetectionYOLOV3(DemoBase):
 
     def start(self):
         self.gather_data()
+        self.validate_data(self.image, self.labels, self.model)
         self.labels = self.load_labels(self.labels)
         self.interpreter = TFLiteInterpreter(self.model)
 

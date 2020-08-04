@@ -11,7 +11,7 @@ import cv2
 from eiq.config import BASE_DIR, ZIP
 from eiq.multimedia.overlay import OpenCVOverlay
 from eiq.multimedia.utils import GstVideo, save_image, VideoConfig
-from eiq.utils import args_parser, colored, Downloader, file_type, Framerate
+from eiq.utils import args_parser, check_data, colored, Downloader, file_type, Framerate
 
 
 class DemoBase:
@@ -73,6 +73,11 @@ class DemoBase:
               "# pyeiq --run {} --video_src /dev/video3\n".format(name))
         print(colored("Multiple parameters can be used at once:\n", "yellow") +
               "# pyeiq --run {} -d drive -v True -f opencv -res vga\n".format(name))
+
+    def validate_data(self, *args):
+        if not check_data(os.path.join(self.base_dir, self.class_name + ZIP),
+                                       self.data['sha1'], *args):
+            self.gather_data()
 
     def gather_data(self):
         if self.data and 'src' in self.data:

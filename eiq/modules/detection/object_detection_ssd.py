@@ -88,6 +88,7 @@ class eIQObjectDetection(DemoBase):
 
     def start(self):
         self.gather_data()
+        self.validate_data(self.image, self.labels, self.model)
         self.interpreter = TFLiteInterpreter(self.model)
         self.labels = self.load_labels(self.labels)
         self.generate_colors()
@@ -163,6 +164,7 @@ class eIQObjectDetectionDNN(DemoBase):
 
     def start(self):
         self.gather_data()
+        self.validate_data(self.caffe, self.image, self.labels, self.proto)
         self.labels = self.load_labels(self.labels)
         self.nn = OpenCVDNN(self.caffe, self.proto)
 
