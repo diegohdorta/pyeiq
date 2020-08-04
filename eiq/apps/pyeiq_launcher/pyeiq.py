@@ -3,8 +3,10 @@
 # SPDX-License-Identifier: BSD-3-Clause
 
 import os
+import pathlib
 from random import randint
 import shutil
+from subprocess import Popen
 
 from eiq import __version__ as version
 from eiq.apps.pyeiq_launcher.config import APPS, DEMOS
@@ -57,6 +59,23 @@ class PyeIQ:
         else:
             print(colored("No data to be removed.\n", "yellow"))
 
+    def install(self):
+        if os.path.isfile(self.args.install):
+            print(f"Installing {self.args.install}...")
+            pathlib.Path(BASE_DIR).mkdir(parents=True, exist_ok=True)
+            file_name = os.path.join(BASE_DIR, os.path.basename(self.args.install))
+            shutil.move(self.args.install, file_name)
+            shutil.unpack_archive(file_name, BASE_DIR)
+            os.remove(file_name)
+
+            for file in os.listdir(BASE_DIR):
+                name = file.split(".")[0]
+                path = os.path.join(BASE_DIR, name)
+                new_file = os.path.join(path, file)
+                pathlib.Path(path).mkdir(parents=True, exist_ok=True)
+                shutil.move(os.path.join(BASE_DIR, file), new_file)
+                shutil.unpack_archive(new_file, path)
+
     def print_info(self, target):
         if target in self.pyeiq_set:
             msg = "PyeIQ - {}".format(target)
@@ -105,6 +124,8 @@ class PyeIQ:
             print("")
 
     def main(self):
+        if self.args.install:
+            self.install()
         if self.args.clear_cache:
             self.clear_cache()
         elif self.args.info:

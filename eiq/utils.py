@@ -241,6 +241,7 @@ def args_parser():
 
     parser.add_argument('--clear-cache', action='store_true')
     parser.add_argument('--info', default=None)
+    parser.add_argument('--install', default=None)
     parser.add_argument('--list-demos', action='store_true')
     parser.add_argument('--list-apps', action='store_true')
     parser.add_argument('--run', default=None)
