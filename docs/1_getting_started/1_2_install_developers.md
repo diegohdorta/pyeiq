@@ -71,6 +71,25 @@ $ scp dist/eiq-<version>.tar.gz root@<ip_address>:/home/root
 # pip3 freeze | grep eiq
 ```
 
+### Downloading Data on Host Machine (Optional)
+
+When you a run a PyeIQ demo/application, it automatically gathers all the data
+required, but it relies on an internet connection. You can also get all that
+data on your host machine and send it to the board.
+
+1. Generate the package containing the data:
+```console
+$ git clone https://source.codeaurora.org/external/imxsupport/pyeiq && cd pyeiq/
+$ git checkout <latest-branch-tag>
+$ python3 offline_installer.py <boards_ip_address>
+```
+This is going to generate a package named eiq.zip and send it to the board.
+
+2. Install the data on your board:
+```console
+# pyeiq --install $HOME/eiq.zip
+```
+
 [pypirepo]: https://pypi.org/project/eiq/#description
 [pypicaf]: https://source.codeaurora.org/external/imxsupport/pyeiq/
 [eiqpackage]: https://img.shields.io/badge/pip3%20install-eiq-green
